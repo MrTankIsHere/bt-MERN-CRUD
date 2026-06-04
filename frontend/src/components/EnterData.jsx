@@ -9,7 +9,20 @@ const EnterData = () => {
     const [mode, setMode] = useState("");
     const [editUser, setEditUser] = useState(null);
 
+    // reusable function to fetch all data......................................................../
+    async function getData() 
+    {
+        await axios.get("http://localhost:5000/printData")
+                .then((res)=>{
+                    setAllData(res.data.userData);
+                    setMode("all");
+                })
+                .catch( (err) => console.error(err))
+    }
+
     // functions
+
+    // data backend ma submmit thay 6e tyathi database ma store thay 6e................................/
     async function handleSubmit(e){
 
         e.preventDefault();
@@ -26,12 +39,7 @@ const EnterData = () => {
             alert("Data sent.../");
             e.target.reset();
             console.log(res);
-            axios.get("http://localhost:5000/printData")
-                .then((res)=>{
-                    setAllData(res.data.userData);
-                    setMode("all");
-                })
-                .catch( (err) => console.error(err))
+            getData();
         })
         .catch((err)=>{
             console.log(err);
@@ -40,8 +48,7 @@ const EnterData = () => {
 
     }
 
-
-
+    // search thava mate id backend ma jaay 6e tyathi database ma search thai data male 6e
     async function handleSearch(e) {
 
         e.preventDefault();
@@ -70,26 +77,7 @@ const EnterData = () => {
     }
 
 
-
-    async function fetchAllData(e) {
-        
-        e.preventDefault();
-
-        await axios.get("http://localhost:5000/printData")
-        .then((res)=>{
-            setAllData(res.data.userData);
-            setMode("all");
-            console.log(res);
-        })
-        .catch((err)=>{
-            console.log(err);
-            alert("Error");
-        })
-
-    }
-
-
-
+    // aa function data delete kre 6e..................................................../
     async function deleteData(id){
 
         await axios.delete(`http://localhost:5000/deleteData/${id}`)
@@ -108,13 +96,14 @@ const EnterData = () => {
     }
 
 
-
-    async function updateData(user){
+    // aa update krva mate editUse ma data nakhe 6e............................................../
+    function updateData(user){
 
         setEditUser(user);
 
     }
 
+    // update form ne handle kre 6e jenathi data update thaay 6e..................................../
     async function handleUpdate(e) {
 
         e.preventDefault();
@@ -128,15 +117,7 @@ const EnterData = () => {
         .then( () => {
             alert("Updated !!");
             setEditUser(null);
-                axios.get("http://localhost:5000/printData")
-                .then( (res) => {
-                    setAllData(res.data.userData);
-                    setMode("all");
-                } )
-                .catch((err) => {
-                    console.log(err);
-                    alert("Error updating.");
-            })
+            getData();
         } )
         .catch( (err) => {
             console.log(err);
@@ -147,26 +128,10 @@ const EnterData = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
+    // useEffect
     useEffect(()=>{
-        
-        axios.get("http://localhost:5000/printData")
-        .then((res)=>{
-            setAllData(res.data.userData);
-            setMode("all");
-        })
-        .catch((err)=>{
-            console.log(err);
-        })
+
+        getData();
 
     }, [])
 
@@ -176,8 +141,8 @@ const EnterData = () => {
 
         <form onSubmit={handleSubmit} >
 
-            <input type="text" name="id" placeholder='Enter Id' required />     <br />
-            <input type="text" name="name" placeholder='Enter Name' required />       <br />
+            <input type="text" name="id" placeholder='Enter Id' required />
+            <input type="text" name="name" placeholder='Enter Name' required /> 
 
             <button type='submit'> Submit </button>
         </form>
@@ -190,7 +155,7 @@ const EnterData = () => {
             <button type='submit'>Search</button>
         </form>
 
-        <button type='submit' onClick={fetchAllData}>All Data</button>
+        <button onClick={getData}>All Data</button>
 
         <hr />
 
